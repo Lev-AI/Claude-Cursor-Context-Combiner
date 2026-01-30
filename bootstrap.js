@@ -825,9 +825,18 @@ echo "  serena project index"
   const commitCheckpointBat = `@echo off
 setlocal enabledelayedexpansion
 set SCOPE=%1
-shift
-set MSG=%*
 if "%SCOPE%"=="" goto usage
+shift
+set "MSG="
+set "FIRST=1"
+
+:buildmsg
+if "%~1"=="" goto checkmsg
+if "!FIRST!"=="1" (set "MSG=%~1" & set "FIRST=0") else (set "MSG=!MSG! %~1")
+shift
+goto buildmsg
+
+:checkmsg
 if "%MSG%"=="" goto usage
 
 git add -A
@@ -835,7 +844,7 @@ git commit -m "checkpoint(%SCOPE%): %MSG%"
 exit /b 0
 
 :usage
-echo Usage: scripts\commit-checkpoint.bat ^<scope^> ^<message...^>
+echo Usage: scripts\\commit-checkpoint.bat ^<scope^> ^<message...^>
 exit /b 1
 `;
 
@@ -843,11 +852,20 @@ exit /b 1
 setlocal enabledelayedexpansion
 set TYPE=%1
 set SCOPE=%2
-shift
-shift
-set MSG=%*
 if "%TYPE%"=="" goto usage
 if "%SCOPE%"=="" goto usage
+shift
+shift
+set "MSG="
+set "FIRST=1"
+
+:buildmsg
+if "%~1"=="" goto checkmsg
+if "!FIRST!"=="1" (set "MSG=%~1" & set "FIRST=0") else (set "MSG=!MSG! %~1")
+shift
+goto buildmsg
+
+:checkmsg
 if "%MSG%"=="" goto usage
 
 git add -A
@@ -855,7 +873,7 @@ git commit -m "%TYPE%(%SCOPE%): %MSG%"
 exit /b 0
 
 :usage
-echo Usage: scripts\commit-main.bat ^<type^> ^<scope^> ^<message...^>
+echo Usage: scripts\\commit-main.bat ^<type^> ^<scope^> ^<message...^>
 echo type: feat^|fix^|refactor^|docs^|test^|chore
 exit /b 1
 `;
