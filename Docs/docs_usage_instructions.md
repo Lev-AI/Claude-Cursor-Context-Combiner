@@ -38,7 +38,7 @@ node bootstrap.js init --force
 node bootstrap.js --help
 ```
 
-After this, restart **Claude Desktop** so it can detect the new MCP tools (if you used `--setup-mcp`).
+After this, restart **Claude Desktop** so it can detect the new MCP tools (if you used `--setup-mcp`). If the project is large, you can add Serena for semantic context (see [§4. Optional: Serena](#4-optional-serena-semantic-context)).
 
 ---
 
@@ -118,6 +118,12 @@ scripts\commit-main.bat feat payment "implemented basic Stripe payment flow"
 
 This commit becomes a **stable rule** for the system.
 
+**Serena (optional, large projects):** To enable semantic search (e.g. “where is this called?”), run indexing once from the project root:
+```bash
+./scripts/serena-index.sh
+```
+The script prints the suggested command (e.g. `uvx --from git+https://github.com/oraios/serena.git serena project index` or `serena project index` if Serena CLI is installed). See [§4. Optional: Serena](#4-optional-serena-semantic-context) for full setup.
+
 ---
 
 ### Step 4: Review (Claude Code)
@@ -148,7 +154,40 @@ Thanks to Repomix, Claude sees a fresh snapshot of the project state.
 
 ---
 
-## 4. Saving tokens (Onion Context Model)
+## 4. Optional: Serena (semantic context)
+
+Serena adds **semantic indexing** (references, callers, dependencies) across the codebase. It is **optional** and not required for the core workflow; Repomix snapshots and commit-driven context are enough for most projects.
+
+**When to enable Serena**
+- **Large codebases** where “who calls this?” or “where is this used?” matters.
+- **Existing projects** where you want better navigation and context than files + diffs alone.
+
+**How to enable**
+
+1. **Automatic (Claude Desktop):** Run init with `--setup-mcp`. This adds both Repomix and Serena to Claude Desktop’s MCP config:
+   ```bash
+   node bootstrap.js init --setup-mcp
+   ```
+   Restart Claude Desktop after running this.
+
+2. **Manual config:** If you skip `--setup-mcp`, add the Serena server yourself:
+   - **Claude Desktop:** Copy the `serena` entry from `.mcp/claude_desktop_config.example.json` into your Claude Desktop config (e.g. via Settings → Developer).
+   - **Cursor:** Copy the `serena` entry from `.mcp/cursor_mcp_config.example.json` into your Cursor MCP settings.
+
+**Indexing**
+- Indexing is a **one-time** (or occasional) step per project. After the first run, the index is reused until you re-index.
+- From the project root, run the helper script (or the Serena CLI if installed):
+  ```bash
+  ./scripts/serena-index.sh
+  ```
+  The script prints the suggested Serena command (e.g. `serena project index` or `uvx --from git+https://github.com/oraios/serena.git serena project index`). Run that when your project is ready.
+
+**Short example**
+- You bootstrap an existing app, run `node bootstrap.js init --setup-mcp`, then run Serena indexing once. Later, in Claude or Cursor, you ask: *“Where is `validateToken` called?”* Serena can answer using the semantic index instead of plain text search.
+
+---
+
+## 5. Saving tokens (Onion Context Model)
 
 For large projects, sending the full repository to Claude can be expensive.
 
@@ -174,7 +213,7 @@ Upload this file to Claude instead of the entire project.
 
 ---
 
-## 5. Troubleshooting
+## 6. Troubleshooting
 
 **Q: Claude does not see my changes**\
 A: Did you commit them?
@@ -209,7 +248,7 @@ The script attempts to handle permission issues automatically, but some environm
 
 ---
 
-## 6. Known limitations
+## 7. Known limitations
 
 - **Windows incremental context:** `scripts/generate-context.bat` includes only one ADR; use Git Bash and `./scripts/generate-context.sh` for up to five.
 - **Paths with spaces:** Generate-context scripts may not handle changed filenames containing spaces correctly.

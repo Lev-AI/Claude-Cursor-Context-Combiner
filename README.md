@@ -1,9 +1,12 @@
 # Claude-Cursor-Context-Combiner
 
 A lightweight framework for working with **Claude Code** and **Cursor** in parallel,\
-using Repomix-based context snapshots to maintain a shared and consistent project context.
+using Git as the primary source of truth and Repomix-based context snapshots to maintain a shared and consistent project context.
 
-Claude Code and Cursor are used as a reference setup; however, the workflow itself is agent- and IDE-agnostic.
+For large or existing projects, Serena can be enabled to improve semantic context understanding.
+
+Claude Code Desktop and Cursor are used as a reference setup; however, the workflow itself is agent- and IDE-agnostic and can be adapted to most common systems.
+
 
 
 **Documentation**
@@ -18,7 +21,7 @@ Claude Code and Cursor are used as a reference setup; however, the workflow itse
 
 ## Quick start
 
-**Prerequisites:** Node.js and Git. Optional: Claude Desktop or Cursor for MCP auto-setup (`--setup-mcp`). The workflow is not tied to a specific Claude UI — which clients work (Desktop, CLI, VS Code) and how MCP applies: [Claude client compatibility](Docs/docs_claude_client_compatibility.md).
+**Prerequisites:** Node.js and Git. Optional: Claude Desktop or Cursor for MCP auto-setup (`--setup-mcp`). `--setup-mcp` configures Claude Desktop only; see [Claude client compatibility](Docs/docs_claude_client_compatibility.md). The workflow is not tied to a specific Claude UI — which clients work (Desktop, CLI, VS Code) and how MCP applies: [Claude client compatibility](Docs/docs_claude_client_compatibility.md).
 
 1. Place `bootstrap.js` in the **root of the project** you want to use as the shared context (copy it from this repo or download it).
 2. From that folder run:
